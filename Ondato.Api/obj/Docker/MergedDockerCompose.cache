@@ -1,0 +1,29 @@
+services:
+  db:
+    depends_on:
+      migrations:
+        condition: service_started
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: myPassword123.
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    ports:
+    - target: 1433
+  migrations:
+    build:
+      context: E:\Sources\Ondato\Ondato.Api
+      dockerfile: Migrations.Dockerfile
+  strongpointrestapi:
+    build:
+      context: E:\Sources\Ondato\Ondato.Api
+      dockerfile: Dockerfile
+    depends_on:
+      db:
+        condition: service_started
+      migrations:
+        condition: service_started
+    image: strongpointrestapi
+    ports:
+    - target: 80
+    - target: 443
+version: '3.4'
